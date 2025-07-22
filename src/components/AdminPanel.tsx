@@ -82,20 +82,46 @@ export function AdminPanel({
     return results.length > 0 ? results[0] : null;
   };
 
-  // Export results
+  // Export results as CSV
   const exportResults = () => {
-    const results = ELECTION_POSITIONS.map(position => ({
-      position: position.title,
-      candidates: getPositionResults(position.id)
-    }));
+    // Create CSV header
+    let csvContent = 'Position,Candidate,Votes,Percentage\n';
     
-    const dataStr = JSON.stringify(results, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    // Add data for each position
+    ELECTION_POSITIONS.forEach(position => {
+      const results = getPositionResults(position.id);
+      results.forEach(candidate => {
+        csvContent += `"${position.title}","${candidate.name}",${candidate.votes},${candidate.percentage}%\n`;
+      });
+      // Add empty line between positions for readability
+      csvContent += '\n';
+    });
+    
+    // Add summary section
+    csvContent += '\n--- SUMMARY ---\n';
+    csvContent += 'Position,Winner,Votes\n';
+    ELECTION_POSITIONS.forEach(position => {
+      const winner = getWinner(position.id);
+      if (winner) {
+        csvContent += `"${position.title}","${winner.name}",${winner.votes}\n`;
+      }
+    });
+    
+    // Add election metadata
+    csvContent += '\n--- ELECTION INFO ---\n';
+    csvContent += `Export Date,${new Date().toLocaleString()}\n`;
+    csvContent += `Total Votes Cast,${Object.values(votes).reduce((sum, positionVotes) => 
+      sum + Object.values(positionVotes).reduce((posSum, count) => posSum + count, 0), 0)}\n`;
+    csvContent += `Total Positions,${ELECTION_POSITIONS.length}\n`;
+    
+    // Create and download CSV file
+    const dataBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'gcn-election-results.json';
+    link.download = `gcn-election-results-${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
+    URL.revokeObjectURL(url);
   };
 
   const selectedPositionResults = getPositionResults(selectedPosition);
