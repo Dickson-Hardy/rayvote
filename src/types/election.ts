@@ -48,44 +48,19 @@ export const ELECTION_POSITIONS: Position[] = [
     ]
   },
   {
-    id: 'provost',
-    title: 'Provost',
-    candidates: [
-      { id: 'austin-audu', name: 'Austin Audu' },
-      { id: 'olokpo-godwin', name: 'Olokpo Godwin' },
-      { id: 'george', name: 'George' }
-    ]
-  },
-  {
-    id: 'pro',
-    title: 'Public Relations Officer (PRO)',
-    candidates: [
-      { id: 'linus', name: 'Linus' },
-      { id: 'oluchi-akpaka', name: 'Oluchi Akpaka' },
-      { id: 'huwal-kabiru', name: 'Huwal Kabiru' }
-    ]
-  },
-  {
     id: 'secretary',
     title: 'Secretary',
     candidates: [
       { id: 'sunday-dsp', name: 'Sunday DSP' },
-      { id: 'blessing-odii', name: 'Blessing Odii' }
-    ]
-  },
-  {
-    id: 'assistant-secretary',
-    title: 'Assistant Secretary',
-    candidates: [
-      { id: 'daddy-blinks', name: 'Daddy Blinks' },
-      { id: 'hamza', name: 'Hamza' }
+      { id: 'blessing-ogbonna-obi', name: 'Blessing Ogbonna Obi' },
+      { id: 'daddy-blinks', name: 'Daddy Blinks' }
     ]
   },
   {
     id: 'welfare-coordinator',
     title: 'Welfare/Event Coordinator',
     candidates: [
-      { id: 'ali-idaewo', name: 'Ali Idaewo' },
+      { id: 'ali-idawor', name: 'Ali Idawor' },
       { id: 'esther-mukanche', name: 'Esther Mukanche' },
       { id: 'anthonia-acha', name: 'Anthonia Acha' }
     ]
@@ -95,7 +70,26 @@ export const ELECTION_POSITIONS: Position[] = [
     title: 'Financial Secretary',
     candidates: [
       { id: 'godiya', name: 'Godiya' },
+      { id: 'jethro', name: 'Jethro' },
       { id: 'patience-patrick', name: 'Patience Patrick' }
+    ]
+  },
+  {
+    id: 'pro',
+    title: 'Public Relations Officer (PRO)',
+    candidates: [
+      { id: 'linus', name: 'Linus' },
+      { id: 'oluchi-akpaka', name: 'Oluchi Akpaka' },
+      { id: 'auwal-kabiru', name: 'Auwal Kabiru' }
+    ]
+  },
+  {
+    id: 'provost',
+    title: 'Provost',
+    candidates: [
+      { id: 'george', name: 'George' },
+      { id: 'austin-audu', name: 'Austin Audu' },
+      { id: 'olokpo-godwin', name: 'Olokpo Godwin' }
     ]
   }
 ];
