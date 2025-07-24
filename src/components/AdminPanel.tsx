@@ -325,72 +325,77 @@ export function AdminPanel({
           </Card>
         </Tabs>
 
-        {/* Admin Controls & Email Testing */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Admin Controls */}
-          <Card className="shadow-card-election border-warning/20 bg-warning/5">
-            <CardHeader>
-              <CardTitle className="text-warning flex items-center space-x-2">
-                <Settings className="h-5 w-5" />
-                <span>Admin Controls</span>
-              </CardTitle>
-              <CardDescription>
-                Election management and data operations
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  <span className="ml-2">Loading vote data...</span>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-4">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={onRefreshData}
-                    disabled={isRefreshing}
-                  >
-                    <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                    {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={exportResults}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Export CSV
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    size="sm" 
-                    onClick={onResetVotes}
-                    disabled={isResetting}
-                  >
-                    {isResetting ? 'Resetting...' : 'Reset All Votes'}
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Email Testing Panel */}
-          <EmailTestingPanel />
-        </div>
-
-        {/* Voter Management */}
+        {/* Admin Management Tabs */}
         <Card className="shadow-card-election">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Users className="h-5 w-5" />
-              <span>Voter Management</span>
+              <Settings className="h-5 w-5" />
+              <span>Admin Management</span>
             </CardTitle>
             <CardDescription>
-              Manage voter registrations and individual vote deletion
+              Manage voters, votes, and election settings
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <VoterManagement />
+            <Tabs defaultValue="voters" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="voters">Voter Management</TabsTrigger>
+                <TabsTrigger value="controls">Admin Controls</TabsTrigger>
+                <TabsTrigger value="email">Email Testing</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="voters" className="mt-6">
+                <VoterManagement />
+              </TabsContent>
+              
+              <TabsContent value="controls" className="mt-6">
+                <div className="space-y-4">
+                  <div className="p-4 bg-warning/5 border border-warning/20 rounded-lg">
+                    <h4 className="font-semibold text-warning mb-2">Election Data Operations</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Manage election data and system operations
+                    </p>
+                    {isLoading ? (
+                      <div className="flex items-center justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <span className="ml-2">Loading vote data...</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-4">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={onRefreshData}
+                          disabled={isRefreshing}
+                        >
+                          <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                          {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={exportResults}>
+                          <Download className="mr-2 h-4 w-4" />
+                          Export CSV
+                        </Button>
+                        <Button 
+                          variant="destructive" 
+                          size="sm" 
+                          onClick={onResetVotes}
+                          disabled={isResetting}
+                        >
+                          {isResetting ? 'Resetting...' : 'Reset All Votes'}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="email" className="mt-6">
+                <EmailTestingPanel />
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
+
       </div>
     </div>
   );
