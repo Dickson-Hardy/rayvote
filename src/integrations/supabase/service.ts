@@ -263,6 +263,81 @@ export class ElectionService {
     }
   }
 
+  static async deleteUserVotes(uniqueId: string): Promise<boolean> {
+    try {
+      // First, get the user ID from the unique_id
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('unique_id', uniqueId)
+        .single();
+
+      if (userError) {
+        console.error('Error finding user:', userError);
+        return false;
+      }
+
+      if (!userData) {
+        console.error('User not found for unique ID:', uniqueId);
+        return false;
+      }
+
+      // Delete all votes for this user
+      const { error: votesError } = await supabase
+        .from('votes')
+        .delete()
+        .eq('user_id', userData.id);
+
+      if (votesError) {
+        console.error('Error deleting user votes:', votesError);
+        return false;
+      }
+
+      // Reset the user's voted status
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ has_voted: false })
+        .eq('id', userData.id);
+
+      if (updateError) {
+        console.error('Error updating user voted status:', updateError);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in deleteUserVotes:', error);
+      return false;
+    }
+  }
+
+  static async deleteUserAccount(uniqueId: string): Promise<boolean> {
+    try {
+      // First delete all votes for the user (cascade delete should handle this, but being explicit)
+      const deleteVotesSuccess = await this.deleteUserVotes(uniqueId);
+      if (!deleteVotesSuccess) {
+        console.error('Failed to delete user votes before deleting account');
+        // Continue anyway as the user delete might still work due to cascade
+      }
+
+      // Delete the user account (this will make the unique_id available again)
+      const { error: deleteUserError } = await supabase
+        .from('users')
+        .delete()
+        .eq('unique_id', uniqueId);
+
+      if (deleteUserError) {
+        console.error('Error deleting user account:', deleteUserError);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in deleteUserAccount:', error);
+      return false;
+    }
+  }
+
   static async getVoterStatus(): Promise<Database['public']['Views']['voter_status']['Row'][]> {
     try {
       const { data, error } = await supabase
@@ -338,6 +413,32 @@ export class ElectionService {
         },
         async () => {
           // Fetch updated vote counts
+          const voteCounts = await this.getVoteCounts();
+          callback(voteCounts);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'votes'
+        },
+        async () => {
+          // Fetch updated vote counts after deletion
+          const voteCounts = await this.getVoteCounts();
+          callback(voteCounts);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'users'
+        },
+        async () => {
+          // Fetch updated vote counts when user voting status changes
           const voteCounts = await this.getVoteCounts();
           callback(voteCounts);
         }

@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { ELECTION_POSITIONS } from '@/types/election';
 import { EmailTestingPanel } from './EmailTestingPanel';
+import { VoterManagement } from './VoterManagement';
 
 interface AdminPanelProps {
   votes: Record<string, Record<string, number>>;
@@ -374,6 +375,22 @@ export function AdminPanel({
           {/* Email Testing Panel */}
           <EmailTestingPanel />
         </div>
+
+        {/* Voter Management */}
+        <Card className="shadow-card-election">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Users className="h-5 w-5" />
+              <span>Voter Management</span>
+            </CardTitle>
+            <CardDescription>
+              Manage voter registrations and individual vote deletion
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <VoterManagement />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

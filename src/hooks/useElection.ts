@@ -108,6 +108,70 @@ export function useResetVotes() {
   });
 }
 
+export function useDeleteUserVotes() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: ElectionService.deleteUserVotes,
+    onSuccess: (success) => {
+      if (success) {
+        // Invalidate relevant queries to refresh data
+        queryClient.invalidateQueries({ queryKey: ELECTION_QUERY_KEYS.voteCounts });
+        queryClient.invalidateQueries({ queryKey: ['user'] });
+        queryClient.invalidateQueries({ queryKey: ['voter-status'] });
+        
+        toast({
+          title: "User votes deleted successfully",
+          description: "The user's votes have been removed and they can vote again.",
+        });
+      } else {
+        throw new Error('Failed to delete user votes');
+      }
+    },
+    onError: (error) => {
+      console.error('Error deleting user votes:', error);
+      toast({
+        title: "Error deleting votes",
+        description: "Please try again. If the problem persists, contact support.",
+        variant: "destructive"
+      });
+    },
+  });
+}
+
+export function useDeleteUserAccount() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: ElectionService.deleteUserAccount,
+    onSuccess: (success) => {
+      if (success) {
+        // Invalidate relevant queries to refresh data
+        queryClient.invalidateQueries({ queryKey: ELECTION_QUERY_KEYS.voteCounts });
+        queryClient.invalidateQueries({ queryKey: ['user'] });
+        queryClient.invalidateQueries({ queryKey: ['voter-status'] });
+        
+        toast({
+          title: "User account deleted successfully",
+          description: "The user account has been completely removed and the ID is available again.",
+        });
+      } else {
+        throw new Error('Failed to delete user account');
+      }
+    },
+    onError: (error) => {
+      console.error('Error deleting user account:', error);
+      toast({
+        title: "Error deleting account",
+        description: "Please try again. If the problem persists, contact support.",
+        variant: "destructive"
+      });
+    },
+  });
+}
+
 export function useRefreshData() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
